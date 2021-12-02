@@ -125,13 +125,15 @@ class MainActivity : AppCompatActivity() {
         }.start()
 
         Thread{
-            sleep(3000)
             var ss=0
             while(true){
                 mPlayer!!.playAudioTrack(fuckx, ss,1000)
                 ss+=1000
                 if(ss>=1000000){
                     ss=0
+                }
+                if(ss>fuckIndex){
+                    sleep(100)
                 }
             }
 
