@@ -27,6 +27,11 @@ class MainActivity : AppCompatActivity() {
     var remoteip=""
     var pool: ByteArray?=null
     var wandorful=false
+    val fuckx=ByteArray(1000000){
+        0.toByte()
+    }
+    var fuckIndex=0;
+    var fuckLimit=0;
 
     lateinit  var channel: DatagramChannel
     private val buf: ByteBuffer = ByteBuffer.allocate(600)
@@ -70,16 +75,24 @@ class MainActivity : AppCompatActivity() {
                 val sip=ip2String(sourceAddress.address)
                 val sport=sourceAddress.port
                 //播放解码后的数据
-                val receiveByteArray=bytebuffer2ByteArray(bufReceive)
+                val receiveByteArray=bytebuffer2ByteArray(bufReceive)!!
+
+                if(receiveByteArray.size+fuckIndex>=1000000){
+                    fuckLimit=fuckIndex;
+                    fuckIndex=0;
+                }
+
+                for(k in receiveByteArray){
+                    fuckx[fuckIndex]=k
+                    fuckIndex++
+                }
+
+      //  mPlayer!!.playAudioTrack( receiveByteArray!!.clone(), 0,receiveByteArray!!.size)
 
 
 
-        mPlayer!!.playAudioTrack( receiveByteArray!!.clone(), 0,receiveByteArray!!.size)
 
-
-
-
-                println("fuckgaga "+"$sip    $sport")
+              //  println("fuckgaga "+"$sip    $sport")
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -119,12 +132,19 @@ class MainActivity : AppCompatActivity() {
             Thread.sleep(100)
             StartListen()
         }.start()
-        val gg=File(PathUtil.getPathX("fuck.pcm")).readBytes()
-        val ggs=gg.size
-        var ss=0
+//        val gg=File(PathUtil.getPathX("fuck.pcm")).readBytes()
+//        val ggs=gg.size
+//        var ss=0
         Thread{
-            while(ss<gg.size-1000){
-                mPlayer!!.playAudioTrack( gg, ss,1000)
+            var ss=0
+            while(true){
+                if(ss+1000>fuckLimit){
+                    mPlayer!!.playAudioTrack( fuckx, ss,fuckLimit-ss)
+                    ss=0;
+                }else{
+                    mPlayer!!.playAudioTrack( fuckx, ss,1000)
+                }
+
                 ss+=1000
             }
 
