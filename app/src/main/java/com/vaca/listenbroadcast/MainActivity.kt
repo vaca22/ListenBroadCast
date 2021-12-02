@@ -31,14 +31,11 @@ class MainActivity : AppCompatActivity() {
         0.toByte()
     }
     var fuckIndex=0;
-    var fuckLimit=0;
+
 
     lateinit  var channel: DatagramChannel
-    private val buf: ByteBuffer = ByteBuffer.allocate(600)
     private val bufReceive: ByteBuffer = ByteBuffer.allocate(600)
-    val byteArray=ByteArray(500){
-        0.toByte()
-    }
+
 
     private var mPlayer: MyAudioTrack? = null
     fun bytebuffer2ByteArray(buffer: ByteBuffer): ByteArray? {
@@ -77,22 +74,16 @@ class MainActivity : AppCompatActivity() {
                 //播放解码后的数据
                 val receiveByteArray=bytebuffer2ByteArray(bufReceive)!!
 
-                if(receiveByteArray.size+fuckIndex>=1000000){
-                    fuckLimit=fuckIndex;
-                    fuckIndex=0;
-                }
-
                 for(k in receiveByteArray){
                     fuckx[fuckIndex]=k
                     fuckIndex++
+                    if(fuckIndex>=1000000){
+                        fuckIndex=0
+                    }
                 }
 
-      //  mPlayer!!.playAudioTrack( receiveByteArray!!.clone(), 0,receiveByteArray!!.size)
 
 
-
-
-              //  println("fuckgaga "+"$sip    $sport")
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -132,25 +123,17 @@ class MainActivity : AppCompatActivity() {
             Thread.sleep(100)
             StartListen()
         }.start()
-//        val gg=File(PathUtil.getPathX("fuck.pcm")).readBytes()
-//        val ggs=gg.size
-//        var ss=0
+
         Thread{
+            sleep(3000)
             var ss=0
             while(true){
-                if(ss+1000>fuckLimit){
-                    mPlayer!!.playAudioTrack( fuckx, ss,fuckLimit-ss)
-                    ss=0;
-                }else{
-                    mPlayer!!.playAudioTrack( fuckx, ss,1000)
-                }
-
+                mPlayer!!.playAudioTrack(fuckx, ss,1000)
                 ss+=1000
+                if(ss>=1000000){
+                    ss=0
+                }
             }
-
-            Log.e("fuck","fuckyou")
-
-
 
         }.start()
 
